@@ -93,52 +93,46 @@
 
 .Chocolate {
     width: 50%;
-    height: 7%;
+    height: 20%;
     margin: 1% auto;
-    background: linear-gradient(#f4d004, #d6bb22);
+    background: linear-gradient(#692d05, #963305);
     border-radius: 5px;
 }
 
 .Strawberry {
     width: 50%;
-    height: 7%;
+    height: 20%;
     margin: 1% auto;
-    background: linear-gradient(#228c1d, #91ce50);
+    background: linear-gradient(#f53218, #da6550);
     border-radius: 5px;
 }
-.Strawberry {
-    width: 50%;
-    height: 7%;
-    margin: 1% auto;
-    background: linear-gradient(#228c1d, #91ce50);
-    border-radius: 5px;
-}
+
 .Blueberry {
     width: 50%;
-    height: 7%;
+    height: 20%;
     margin: 1% auto;
-    background: linear-gradient(#228c1d, #91ce50);
+    background: linear-gradient(#4a05e9, #9b50f1);
     border-radius: 5px;
 }
 .Vanilla {
     width: 50%;
-    height: 7%;
+    height: 20%;
     margin: 1% auto;
-    background: linear-gradient(#228c1d, #91ce50);
+    background: linear-gradient(#e4d583, #ece1bb);
     border-radius: 5px;
 }
 .Lemon {
     width: 50%;
     height: 7%;
     margin: 1% auto;
-    background: linear-gradient(#228c1d, #91ce50);
+    background: linear-gradient(#0ff803, #91ce50);
     border-radius: 5px;
 }
 .Orange {
     width: 50%;
     height: 7%;
     margin: 1% auto;
-    background: linear-gradient(#228c1d, #91ce50);
+    background: linear-gradient(#eb6e08, #e98e59);
     border-radius: 5px;
 }
 
