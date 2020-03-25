@@ -7,10 +7,10 @@
 }
 
 .BuildControl button {
-    display: block;
+    /* display: block; */
     font: inherit;
-    padding: 5px;
-    margin: 0 5px;
+    padding: 5px; 
+    margin: 0 5px; 
     width: 80px;
     border: 1px solid #AA6817;
     cursor: pointer;
@@ -37,22 +37,22 @@
 }
 
 .BuildControl .Less {
-    background-color: wheat;
+    background-color: rgb(238, 131, 10);
     color: white;
 }
 
 .BuildControl .More {
-    background-color: wheat;
+    background-color: rgb(241, 119, 4);
     color: white;
 }
 
 
 .BuildControl .Less:hover, .BuildControl .Less:active {
-    background-color: azure;
+    background-color: rgb(243, 156, 74);
     color: white;
 }
 
 .BuildControl .More:hover, .BuildControl .More:active {
-    background-color: antiquewhite;
+    background-color: rgb(226, 162, 103);
     color: white;
 }

@@ -7,11 +7,12 @@ class CakeIngredient extends Component  {
 
     switch (this.props.type) {
         case ('cake-bottom'):
-        ingredient = <div className="CakeBottom" />;
+        ingredient = <div className="CakeBottom"><h3 className="FontBase">CAKE's BASE</h3></div>;
         break;
         case ('cake-top'):
         ingredient = (
             <div className="CookieTop">
+            <h3 className="TopCake">DECORATE THE CAKE </h3>
             <div className="Cream1" />
             <div className="Cream2" />
             </div>
