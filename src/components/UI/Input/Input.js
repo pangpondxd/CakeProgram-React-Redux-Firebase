@@ -5,7 +5,7 @@ const input = (props) => {
     let inputElement = null;
     const inputClasses= ["InputElement"]
 
-    if(props.invalid) {
+    if(props.invalid && props.shouldValidate && props.touched) {
         inputClasses.push("Invalid")
     }
 
@@ -18,7 +18,7 @@ const input = (props) => {
                 />;
             break;
         case ('textarea'):
-            inputElement = <textarea className={inputClasses}
+            inputElement = <textarea className={inputClasses.join(' ')}
             {...props.elementConfig} 
             value={props.value}
             onChange={props.changed}
@@ -27,7 +27,7 @@ const input = (props) => {
         case ('select'):
             inputElement = (
             <select
-                className={inputClasses} 
+                className={inputClasses.join(' ')} 
                 value={props.value}
                 onChange={props.changed}
                 >

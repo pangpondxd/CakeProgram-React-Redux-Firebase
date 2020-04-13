@@ -17,7 +17,8 @@ class ContactData extends Component {
               validation: {
                 required: true
               },
-              valid: false
+              valid: false,
+              touched: false
             },
               street: {
                 elementType: 'input',
@@ -29,7 +30,8 @@ class ContactData extends Component {
                 validation: {
                   required: true
                 },
-                valid: false
+                valid: false,
+                touched: false
               },
               country: {
                 elementType: 'input',
@@ -39,7 +41,8 @@ class ContactData extends Component {
                 },
                 value: '',
                 validation: {
-                  required: true
+                  required: true,
+                  touched: false
                 },
                 valid: false
               },
@@ -55,7 +58,8 @@ class ContactData extends Component {
                   minLength: 5,
                   maxLength: 5
                 },
-                valid: false
+                valid: false,
+                touched: false
               },
               email: {
                 elementType: 'input',
@@ -67,7 +71,8 @@ class ContactData extends Component {
                 validation: {
                   required: true
                 },
-                valid: false
+                valid: false,
+                touched: false
               },
               telephone: {
                 elementType: 'input',
@@ -77,9 +82,12 @@ class ContactData extends Component {
                 },
                 value: '',
                 validation: {
-                  required: true
+                  required: true,
+                  minLengthPhone: 9,
+                  maxLengthPhone: 10
                 },
-                valid: false
+                valid: false,
+                touched: false
               },
               landmark: {
                 elementType: 'input',
@@ -87,11 +95,7 @@ class ContactData extends Component {
                   type: 'text',
                   placeholder: 'Landmark around you (Optional)'
                 },
-                value: '',
-                validation: {
-                  required: true
-                },
-                valid: false
+                value: ''
               },
           deliveryMethod: {
             elementType: 'select',
@@ -101,11 +105,7 @@ class ContactData extends Component {
                 {value: 'cheapest', displayValue: 'Cheapest'}
               ]
             },
-            value: '' ,
-            validation: {
-              required: true
-            },
-            valid: false
+            value: '' 
           }
           },
         loading: false
@@ -143,6 +143,7 @@ class ContactData extends Component {
     }
     updatedFormElement.value = event.target.value
     updatedFormElement.valid = this.checkValidility(updatedFormElement.value, updatedFormElement.validation)
+    updatedFormElement.touched = true
     updatedOrderForm[inputIdentifier] = updatedFormElement
     console.log(updatedFormElement)
     this.setState({orderForm: updatedOrderForm})
@@ -154,6 +155,12 @@ class ContactData extends Component {
     }
     if(rules.minLength) {
       isValid = value.length === 5 && isValid;
+    }
+    if(rules.minLengthPhone) {
+      isValid = value.length >= 9 && isValid;
+    }
+    if(rules.maxLengthPhone) {
+      isValid = value.length  <= 10 && isValid;
     }
     return isValid
   }
@@ -174,6 +181,8 @@ class ContactData extends Component {
                 elementConfig = {formElement.config.elementConfig}
                 value = {formElement.config.value}
                 invalid = {!formElement.config.valid}
+                shouldValidate=  {formElement.config.validation}
+                touched= {formElement.config.touched}
                 changed = {(event) => this.inputChangeHandler(event, formElement.id)}
               />
             ))}
