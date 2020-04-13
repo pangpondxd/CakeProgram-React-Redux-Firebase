@@ -3,38 +3,127 @@ import Button from '../../../components/UI/Button/Button'
 import './ContactData.css'
 import axios from '../../../axios-orders'
 import Spinner from '../../../components/UI/Spinner/Spinner'
+import Input from '../../../components/UI/Input/Input'
 class ContactData extends Component {
     state = {
-        name: '',
-        email: '',
-        address: {
-            street: '',
-            postalCode: ''
-        },
-        phone: '',
-        landmark: '',
+        orderForm: {
+            name: {
+              elementType: 'input',
+              elementConfig: {
+                type: 'text',
+                placeholder: 'Your Name'
+              },
+              value: '',
+              validation: {
+                required: true
+              },
+              valid: false
+            },
+              street: {
+                elementType: 'input',
+                elementConfig: {
+                  type: 'text',
+                  placeholder: 'Street'
+                },
+                value: '',
+                validation: {
+                  required: true
+                },
+                valid: false
+              },
+              country: {
+                elementType: 'input',
+                elementConfig: {
+                  type: 'text',
+                  placeholder: 'Country'
+                },
+                value: '',
+                validation: {
+                  required: true
+                },
+                valid: false
+              },
+              zipcode: {
+                elementType: 'input',
+                elementConfig: {
+                  type: 'text',
+                  placeholder: 'ZIP Code'
+                },
+                value: '',
+                validation: {
+                  required: true,
+                  minLength: 5,
+                  maxLength: 5
+                },
+                valid: false
+              },
+              email: {
+                elementType: 'input',
+                elementConfig: {
+                  type: 'email',
+                  placeholder: 'Your Email'
+                },
+                value: '',
+                validation: {
+                  required: true
+                },
+                valid: false
+              },
+              telephone: {
+                elementType: 'input',
+                elementConfig: {
+                  type: 'text',
+                  placeholder: 'Your Phone'
+                },
+                value: '',
+                validation: {
+                  required: true
+                },
+                valid: false
+              },
+              landmark: {
+                elementType: 'input',
+                elementConfig: {
+                  type: 'text',
+                  placeholder: 'Landmark around you (Optional)'
+                },
+                value: '',
+                validation: {
+                  required: true
+                },
+                valid: false
+              },
+          deliveryMethod: {
+            elementType: 'select',
+            elementConfig: {
+              options: [
+                {value: 'fastest', displayValue: 'Fastest'},
+                {value: 'cheapest', displayValue: 'Cheapest'}
+              ]
+            },
+            value: '' ,
+            validation: {
+              required: true
+            },
+            valid: false
+          }
+          },
         loading: false
     }
 
     orderHandler = (event) => {
         event.preventDefault()
         console.log(this.props.ingredients)
-          this.setState({ loading: true });
-    const order = {
-      ingredients: this.props.ingredients,
-      price: this.props.price,
-      customer: {
-        name: "Tanawat",
-        address: {
-          street: "vichitsongkram",
-          zipcode: "83120",
-          country: "Thailand"
-        },
-        email: "webmaster.tanawat@gmail.com",
-        telephone: "0658678035"
-      },
-      deliveryMethod: "fastest"
-    };
+        this.setState({ loading: true });
+        const formData = {}
+        for (let formElementIdentifier in this.state.orderForm) {
+          formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value
+        }
+        const order = {
+        ingredients: this.props.ingredients,
+        price: this.props.price,
+        orderData: formData
+        };
     axios
       .post("/orders.json", order)
       .then(res => {
@@ -45,16 +134,51 @@ class ContactData extends Component {
         this.setState({ loading: false });
     })
 }
+  inputChangeHandler = (event, inputIdentifier) => {
+    const updatedOrderForm = {
+      ...this.state.orderForm
+    }
+    const updatedFormElement = { 
+      ...updatedOrderForm[inputIdentifier]
+    }
+    updatedFormElement.value = event.target.value
+    updatedFormElement.valid = this.checkValidility(updatedFormElement.value, updatedFormElement.validation)
+    updatedOrderForm[inputIdentifier] = updatedFormElement
+    console.log(updatedFormElement)
+    this.setState({orderForm: updatedOrderForm})
+  }
+  checkValidility = (value, rules) => {
+    let isValid = true
+    if(rules.required) {
+      isValid = value.trim() !== '' && isValid;
+    }
+    if(rules.minLength) {
+      isValid = value.length === 5 && isValid;
+    }
+    return isValid
+  }
     render() {
-        let form = (<form>
-            <input className="input" type="text" name="name" placeholder="Your Name" /> <br/>
-            <input className="input" type="email" name="name" placeholder="Your Email" /> <br/>
-            <input className="input" type="text" name="street" placeholder="Street" /> <br/>
-            <input className="input" type="text" name="postal" placeholder="postal" /> <br/>
-            <input className="input" type="number" name="phone" placeholder="Your Phone-Number" /> <br/>
-            <input className="input" type="text" name="landmark" placeholder="สถานที่ใกล้เคียง/ landmark around your address" /> <br/>
-            <Button className="Success" clicked={this.orderHandler}>ORDER</Button>
-            </form>
+        const formElementsArray = []
+        for(let key in this.state.orderForm) {
+          formElementsArray.push({
+            id: key,
+            config: this.state.orderForm[key]
+          })
+        }
+        let form = (
+        <form onSubmit={this.orderHandler}>
+            {formElementsArray.map(formElement => (
+              <Input 
+                key={formElement.id}
+                elementType = {formElement.config.elementType}
+                elementConfig = {formElement.config.elementConfig}
+                value = {formElement.config.value}
+                invalid = {!formElement.config.valid}
+                changed = {(event) => this.inputChangeHandler(event, formElement.id)}
+              />
+            ))}
+            <Button className="Success">ORDER</Button>
+         </form>
         )
         if(this.state.loading) {
             form = <Spinner />
