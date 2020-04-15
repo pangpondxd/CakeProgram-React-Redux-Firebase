@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import Button from '../../../components/UI/Button/Button'
 import './ContactData.css'
-import axios from '../../../axios-orders'
 import Spinner from '../../../components/UI/Spinner/Spinner'
 import Input from '../../../components/UI/Input/Input'
 import { connect } from 'react-redux'
-
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler'
+import axios from '../../../axios-orders'
+import * as actions from '../../../store/actions/index'
 class ContactData extends Component {
     state = {
         orderForm: {
@@ -119,8 +120,7 @@ class ContactData extends Component {
             valid: true
           }
           },
-        formIsValid: false,
-        loading: false
+        formIsValid: false
     }
 
     orderHandler = (event) => {
@@ -135,17 +135,10 @@ class ContactData extends Component {
         ingredients: this.props.ings,
         price: this.props.price,
         orderData: formData
-        };
-    axios
-      .post("/orders.json", order)
-      .then(res => {
-        this.setState({ loading: false });
-        this.props.history.push('/')
-      })
-      .catch(err => {
-        this.setState({ loading: false });
-    })
-}
+        }
+        this.props.onOrderCake(order)
+        
+      }
   inputChangeHandler = (event, inputIdentifier) => {
     const updatedOrderForm = {
       ...this.state.orderForm
@@ -207,7 +200,7 @@ class ContactData extends Component {
             <Button disabled={!this.state.formIsValid}>ORDER</Button>
          </form>
         )
-        if(this.state.loading) {
+        if(this.props.loading) {
             form = <Spinner />
         }
         
@@ -222,9 +215,16 @@ class ContactData extends Component {
 
 const mapStateToProps = state => {
   return {
-    ings: state.ingredients,
-    price: state.totalPrice
+    ings: state.cakeBuilder.ingredients,
+    price: state.cakeBuilder.totalPrice,
+    loading: state.order.loading
   }
 }
 
-export default connect(mapStateToProps)(ContactData)
+const mapDispatchToProps = dispatch => {
+  return {
+    onOrderCake: (orderData) => dispatch(actions.purchaseCake(orderData))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData, axios))

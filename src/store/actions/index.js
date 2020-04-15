@@ -1,5 +1,6 @@
 export {
     addIngredient,
-    removeIngredient
+    removeIngredient,
+    initIngredients
 } from './cakeBuilder'
-export {} from './order'
+export { purchaseCake } from './order'

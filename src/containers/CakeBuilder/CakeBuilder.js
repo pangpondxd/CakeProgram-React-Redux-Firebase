@@ -4,33 +4,24 @@ import Cake from "../../components/Cake/Cake";
 import BuildControls from "../../components/Cake/BuildControls/BuildControls";
 import Modal from "../../components/UI/Modal/Modal";
 import OrderSummary from "../../components/Cake/OrderSummary/OrderSummary";
-import axios from "../../axios-orders";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
 import { connect } from 'react-redux'
 import * as cakeBuilderActions from '../../store/actions/index'
-
+import axios from '../../axios-orders'
 class CakeBuilder extends Component {
   // constructor(props) {
   //     super(props);
   //     this.state = {...}
   // }
   state = {
-    purchasing: false,
-    loading: false,
-    error: false
+    purchasing: false
   };
-  // componentDidMount() {
-  //   console.log(this.props)
-  //   axios
-  //     .get("https://jobsphuket-dfdd9.firebaseio.com/ingredients.json")
-  //     .then(res => {
-  //       this.setState({ ingredients: res.data });
-  //     })
-  //     .catch(err => {
-  //       this.setState({error: true})
-  //     });
-  // }
+  componentDidMount() {
+    console.log(this.props)
+    this.props.onInitIngredients()
+  
+  }
   updatePurchaseState(ingredients) {
     const sum = Object.keys(ingredients)
       .map(igKey => {
@@ -64,7 +55,7 @@ class CakeBuilder extends Component {
     }
     let orderSummary = null;
     
-let cake = this.state.error ? <p>Ingredients can't loaded</p> : <Spinner /> ;
+let cake = this.props.error ? <p>Ingredients can't loaded</p> : <Spinner /> ;
 if(this.props.ings){
     cake = (
         <Aux>
@@ -87,10 +78,6 @@ if(this.props.ings){
           purchaseContinued={this.purchaseContinueHandler}
         />
     }
-    if (this.state.loading) {
-        orderSummary = <Spinner />;
-      }
-    
     return (
       <Aux>
         <Modal
@@ -107,15 +94,17 @@ if(this.props.ings){
 
 const mapStateToProps = state => {
   return {
-    ings: state.ingredients,
-    price: state.totalPrice
+    ings: state.cakeBuilder.ingredients,
+    price: state.cakeBuilder.totalPrice,
+    error: state.cakeBuilder.error
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     onIngredientAdded: (ingName) => dispatch(cakeBuilderActions.addIngredient(ingName)),
-    onIngredientRemoved: (ingName) => dispatch(cakeBuilderActions.removeIngredient(ingName))
+    onIngredientRemoved: (ingName) => dispatch(cakeBuilderActions.removeIngredient(ingName)),
+    onInitIngredients: () => dispatch(cakeBuilderActions.initIngredients())
   }
 }
 
