@@ -7,6 +7,8 @@ import OrderSummary from "../../components/Cake/OrderSummary/OrderSummary";
 import axios from "../../axios-orders";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
+import { connect } from 'react-redux'
+import * as actionTypes from '../../store/actions'
 const INGREDIENT_PRICES = {
   chocolate: 250,
   strawberry: 199,
@@ -21,7 +23,6 @@ class CakeBuilder extends Component {
   //     this.state = {...}
   // }
   state = {
-    ingredients: null,
     totalPrice: 0,
     purchasable: false,
     purchasing: false,
@@ -105,7 +106,7 @@ class CakeBuilder extends Component {
   };
   render() {
     const disabledInfo = {
-      ...this.state.ingredients
+      ...this.props.ings
     };
     for (let key in disabledInfo) {
       disabledInfo[key] = disabledInfo[key] <= 0;
@@ -113,13 +114,13 @@ class CakeBuilder extends Component {
     let orderSummary = null;
     
 let cake = this.state.error ? <p>Ingredients can't loaded</p> : <Spinner /> ;
-if(this.state.ingredients){
+if(this.props.ings){
     cake = (
         <Aux>
-          <Cake ingredients={this.state.ingredients} />
+          <Cake ingredients={this.props.ings} />
           <BuildControls
-            ingredientAdded={this.addIngredientHandle}
-            ingredientRemoved={this.removeIngredientHandle}
+            ingredientAdded={this.props.onIngredientAdded}
+            ingredientRemoved={this.props.onIngredientRemoved}
             disabled={disabledInfo}
             price={this.state.totalPrice}
             purchasable={this.state.purchaseable}
@@ -129,7 +130,7 @@ if(this.state.ingredients){
       );
       orderSummary = 
         <OrderSummary
-          ingredients={this.state.ingredients}
+          ingredients={this.props.ings}
           price={this.state.totalPrice}
           purchaseCanceled={this.purchaseCancelHandler}
           purchaseContinued={this.purchaseContinueHandler}
@@ -153,4 +154,17 @@ if(this.state.ingredients){
   }
 }
 
-export default withErrorHandler(CakeBuilder, axios);
+const mapStateToProps = state => {
+  return {
+    ings: state.ingredients
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onIngredientAdded: (ingName) => dispatch({type: actionTypes.ADD_INGREDIENT, ingredientName: ingName}),
+    onIngredientRemoved: (ingName) => dispatch({type: actionTypes.REMOVE_INGREDIENT, ingredientName: ingName})
+  }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(CakeBuilder, axios));
