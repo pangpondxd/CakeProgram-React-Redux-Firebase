@@ -8,7 +8,7 @@ import axios from "../../axios-orders";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
 import { connect } from 'react-redux'
-import * as actionTypes from '../../store/actions'
+import * as cakeBuilderActions from '../../store/actions/index'
 
 class CakeBuilder extends Component {
   // constructor(props) {
@@ -20,17 +20,17 @@ class CakeBuilder extends Component {
     loading: false,
     error: false
   };
-  componentDidMount() {
-    console.log(this.props)
-    axios
-      .get("https://jobsphuket-dfdd9.firebaseio.com/ingredients.json")
-      .then(res => {
-        this.setState({ ingredients: res.data });
-      })
-      .catch(err => {
-        this.setState({error: true})
-      });
-  }
+  // componentDidMount() {
+  //   console.log(this.props)
+  //   axios
+  //     .get("https://jobsphuket-dfdd9.firebaseio.com/ingredients.json")
+  //     .then(res => {
+  //       this.setState({ ingredients: res.data });
+  //     })
+  //     .catch(err => {
+  //       this.setState({error: true})
+  //     });
+  // }
   updatePurchaseState(ingredients) {
     const sum = Object.keys(ingredients)
       .map(igKey => {
@@ -114,8 +114,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onIngredientAdded: (ingName) => dispatch({type: actionTypes.ADD_INGREDIENT, ingredientName: ingName}),
-    onIngredientRemoved: (ingName) => dispatch({type: actionTypes.REMOVE_INGREDIENT, ingredientName: ingName})
+    onIngredientAdded: (ingName) => dispatch(cakeBuilderActions.addIngredient(ingName)),
+    onIngredientRemoved: (ingName) => dispatch(cakeBuilderActions.removeIngredient(ingName))
   }
 }
 
