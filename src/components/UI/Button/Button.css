@@ -34,3 +34,8 @@ Button:hover, Button:active {
 .Danger {
     color: #944317
 }
+
+.Button:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}

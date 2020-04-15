@@ -95,7 +95,12 @@ class ContactData extends Component {
                   type: 'text',
                   placeholder: 'Landmark around you (Optional)'
                 },
-                value: ''
+                value: '',
+                validation: {
+                  required: false
+                },
+                valid: true,
+                touched: true
               },
           deliveryMethod: {
             elementType: 'select',
@@ -105,9 +110,14 @@ class ContactData extends Component {
                 {value: 'cheapest', displayValue: 'Cheapest'}
               ]
             },
-            value: '' 
+            validation: {
+              required: false
+            },
+            value: '' ,
+            valid: true
           }
           },
+        formIsValid: false,
         loading: false
     }
 
@@ -145,8 +155,14 @@ class ContactData extends Component {
     updatedFormElement.valid = this.checkValidility(updatedFormElement.value, updatedFormElement.validation)
     updatedFormElement.touched = true
     updatedOrderForm[inputIdentifier] = updatedFormElement
+
+    let formIsValid = true;
+    for(let inputIdentifier in updatedOrderForm) {
+      formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid
+    }
+
     console.log(updatedFormElement)
-    this.setState({orderForm: updatedOrderForm})
+    this.setState({orderForm: updatedOrderForm, formIsValid: formIsValid})
   }
   checkValidility = (value, rules) => {
     let isValid = true
@@ -186,7 +202,7 @@ class ContactData extends Component {
                 changed = {(event) => this.inputChangeHandler(event, formElement.id)}
               />
             ))}
-            <Button className="Success">ORDER</Button>
+            <Button disabled={!this.state.formIsValid}>ORDER</Button>
          </form>
         )
         if(this.state.loading) {
