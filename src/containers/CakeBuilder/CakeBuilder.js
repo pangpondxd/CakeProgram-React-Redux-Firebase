@@ -1,117 +1,111 @@
-import React, { Component } from 'react'
-import Aux from '../../hoc/Aux'
-import Cake from '../../components/Cake/Cake'
-import BuildControls from '../../components/Cake/BuildControls/BuildControls'
-import Modal from '../../components/UI/Modal/Modal'
-import OrderSummary from '../../components/Cake/OrderSummary/OrderSummary'
-
-const INGREDIENT_PRICES = {
-    chocolate:250,
-    strawberry:199,
-    blueberry:199,
-    vanilla:199,
-    lemon:199,
-    orange:199
-}
+import React, { Component } from "react";
+import Aux from "../../hoc/Aux/Aux";
+import Cake from "../../components/Cake/Cake";
+import BuildControls from "../../components/Cake/BuildControls/BuildControls";
+import Modal from "../../components/UI/Modal/Modal";
+import OrderSummary from "../../components/Cake/OrderSummary/OrderSummary";
+import Spinner from "../../components/UI/Spinner/Spinner";
+import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
+import { connect } from 'react-redux'
+import * as cakeBuilderActions from '../../store/actions/index'
+import axios from '../../axios-orders'
 class CakeBuilder extends Component {
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {...}
-    // }
-    state = {
-        ingredients:{
-            chocolate:0,
-            strawberry:0,
-            blueberry:0,
-            vanilla:0,
-            lemon:0,
-            orange:0
-        },
-        totalPrice: 0,
-        purchasable: false,
-        purchasing: false
-    }
-    updatePurchaseState (ingredients) {
-        const sum = Object.keys(ingredients).map(igKey => {
-            return ingredients[igKey]
-        })
-        .reduce((sum, el) => {
-            return sum + el;
-        }, 0);
-        this.setState({purchaseable: sum > 0})
-    }
+  // constructor(props) {
+  //     super(props);
+  //     this.state = {...}
+  // }
+  state = {
+    purchasing: false
+  };
+  componentDidMount() {
+    console.log(this.props)
+    this.props.onInitIngredients()
+  
+  }
+  updatePurchaseState(ingredients) {
+    const sum = Object.keys(ingredients)
+      .map(igKey => {
+        return ingredients[igKey];
+      })
+      .reduce((sum, el) => {
+        return sum + el;
+      }, 0);
+    return sum > 0
+  }
 
-    addIngredientHandle = (type) => {
-        const oldCount = this.state.ingredients[type];
-        const updatedCounted = oldCount + 1;
-        const updatedIngredients = {
-            ...this.state.ingredients
-        };
-        updatedIngredients[type] = updatedCounted;
-        const priceAddition = INGREDIENT_PRICES[type];
-        const oldPrice = this.state.totalPrice;
-        const newPrice = oldPrice + priceAddition;
-        this.setState({totalPrice: newPrice, ingredients: updatedIngredients})
-        this.updatePurchaseState(updatedIngredients);
-    }
-    removeIngredientHandle = (type) => {
-        const oldCount = this.state.ingredients[type];
-        if(oldCount <= 0) {
-            return;
-        }
-        const updatedCounted = oldCount -1;
-        const updatedIngredients = {
-            ...this.state.ingredients
-        };
-        updatedIngredients[type] = updatedCounted;
-        const priceAddition = INGREDIENT_PRICES[type];
-        const oldPrice = this.state.totalPrice;
-        const newPrice = oldPrice - priceAddition;
-        this.setState({totalPrice: newPrice, ingredients: updatedIngredients})
-        this.updatePurchaseState(updatedIngredients);
-    }
+  
 
-    purchaseHandle = () => {
-        this.setState({purchasing: true})
-    }
+  purchaseHandle = () => {
+    this.setState({ purchasing: true });
+  };
 
-    purchaseCancelHandler = () => {
-        this.setState({purchasing: false})
-    }
+  purchaseCancelHandler = () => {
+    this.setState({ purchasing: false });
+  };
 
-    purchaseContinueHandle = () => {
-        alert('You continue!')
+  purchaseContinueHandler = () => {
+    this.props.history.push('/checkout')
+  };
+  render() {
+    const disabledInfo = {
+      ...this.props.ings
+    };
+    for (let key in disabledInfo) {
+      disabledInfo[key] = disabledInfo[key] <= 0;
     }
-    render () {
-        const disabledInfo = {
-            ...this.state.ingredients
-        }
-        for (let key in disabledInfo) {
-            disabledInfo[key] = disabledInfo[key] <= 0
-        }
-        return (
-            <Aux>
-                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>
-                    <OrderSummary 
-                    ingredients={this.state.ingredients} 
-                    price={this.state.totalPrice}
-                    purchaseCanceled={this.purchaseCancelHandler}
-                    purchaseContinued={this.purchaseContinueHandle}
-                    /> 
-                </Modal> 
-                <div>Hello world</div>
-                <Cake ingredients={this.state.ingredients} />
-                <BuildControls
-                ingredientAdded={this.addIngredientHandle}
-                ingredientRemoved={this.removeIngredientHandle}
-                disabled={disabledInfo}
-                price={this.state.totalPrice}
-                purchasable={this.state.purchaseable}
-                ordered={this.purchaseHandle}
-                />
-            </Aux>
-        )
+    let orderSummary = null;
+    
+let cake = this.props.error ? <p>Ingredients can't loaded</p> : <Spinner /> ;
+if(this.props.ings){
+    cake = (
+        <Aux>
+          <Cake ingredients={this.props.ings} />
+          <BuildControls
+            ingredientAdded={this.props.onIngredientAdded}
+            ingredientRemoved={this.props.onIngredientRemoved}
+            disabled={disabledInfo}
+            price={this.props.price}
+            purchasable={this.updatePurchaseState(this.props.ings)}
+            ordered={this.purchaseHandle}
+          />
+        </Aux>
+      );
+      orderSummary = 
+        <OrderSummary
+          ingredients={this.props.ings}
+          price={this.props.price}
+          purchaseCanceled={this.purchaseCancelHandler}
+          purchaseContinued={this.purchaseContinueHandler}
+        />
     }
+    return (
+      <Aux>
+        <Modal
+          show={this.state.purchasing}
+          modalClosed={this.purchaseCancelHandler}
+        >
+          {orderSummary}
+        </Modal>
+        {cake}
+      </Aux>
+    );
+  }
 }
 
-export default CakeBuilder
+const mapStateToProps = state => {
+  return {
+    ings: state.cakeBuilder.ingredients,
+    price: state.cakeBuilder.totalPrice,
+    error: state.cakeBuilder.error
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onIngredientAdded: (ingName) => dispatch(cakeBuilderActions.addIngredient(ingName)),
+    onIngredientRemoved: (ingName) => dispatch(cakeBuilderActions.removeIngredient(ingName)),
+    onInitIngredients: () => dispatch(cakeBuilderActions.initIngredients())
+  }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(CakeBuilder, axios));

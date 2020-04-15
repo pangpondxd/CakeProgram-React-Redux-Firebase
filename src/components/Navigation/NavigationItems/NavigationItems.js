@@ -3,8 +3,8 @@ import NavigationItem from './NavigationItem/NavigationItem'
 import './NavigationItems.css'
 const NavigationItems = (props) => (
     <ul className="NavigationItems">
-       <NavigationItem link="/" active>Cake Builder</NavigationItem>
-       <NavigationItem link="/">Checkout</NavigationItem>
+       <NavigationItem link="/" exact>Cake Builder</NavigationItem>
+       <NavigationItem link="/orders">Orders</NavigationItem>
     </ul>
 )
 
