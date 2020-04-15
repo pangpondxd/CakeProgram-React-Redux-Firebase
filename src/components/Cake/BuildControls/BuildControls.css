@@ -8,3 +8,9 @@
     margin: auto;
     padding: 10px 0;
 }
+
+button:disabled {
+    background-color: white;
+    color: #ccc;
+    cursor: not-allowed
+}
