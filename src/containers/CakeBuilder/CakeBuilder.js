@@ -44,6 +44,7 @@ class CakeBuilder extends Component {
   };
 
   purchaseContinueHandler = () => {
+    this.props.onInitPurchase()
     this.props.history.push('/checkout')
   };
   render() {
@@ -104,7 +105,8 @@ const mapDispatchToProps = dispatch => {
   return {
     onIngredientAdded: (ingName) => dispatch(cakeBuilderActions.addIngredient(ingName)),
     onIngredientRemoved: (ingName) => dispatch(cakeBuilderActions.removeIngredient(ingName)),
-    onInitIngredients: () => dispatch(cakeBuilderActions.initIngredients())
+    onInitIngredients: () => dispatch(cakeBuilderActions.initIngredients()),
+    onInitPurchase: () => dispatch(cakeBuilderActions.purchaseInit())
   }
 }
 
