@@ -58,7 +58,7 @@ class ContactData extends Component {
                 value: '',
                 validation: {
                   required: true,
-                  minLength: 5,
+                  equalLength: 5,
                   maxLength: 5
                 },
                 valid: false,
@@ -164,8 +164,11 @@ class ContactData extends Component {
     if(rules.required) {
       isValid = value.trim() !== '' && isValid;
     }
-    if(rules.minLength) {
+    if(rules.equalLength) {
       isValid = value.length === 5 && isValid;
+    }
+    if(rules.minLength){
+      isValid = value.length > 5 && isValid;
     }
     if(rules.minLengthPhone) {
       isValid = value.length >= 9 && isValid;
