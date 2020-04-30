@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import './index.css';
 import Layout from './hoc/Layout/Layout'
 import CakeBuilder from './containers/CakeBuilder/CakeBuilder'
@@ -7,8 +7,7 @@ import { Route, Switch } from 'react-router-dom'
 import Orders from './containers/Orders/Orders'
 import Auth from './containers/Orders/Auth/Auth.js'
 import Logout from './containers/Orders/Auth/Logout/Logout'
-class App extends Component {
-  render(){
+const App = props =>  {
     return (
       <div>
         <Layout>
@@ -22,6 +21,5 @@ class App extends Component {
         </Layout>
       </div>
     );
-  }
   }
 export default App;
