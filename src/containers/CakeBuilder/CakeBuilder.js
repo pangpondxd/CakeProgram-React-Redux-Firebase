@@ -36,7 +36,13 @@ class CakeBuilder extends Component {
   
 
   purchaseHandle = () => {
-    this.setState({ purchasing: true });
+    if(this.props.isAuthenticated){
+      this.setState({ purchasing: true });
+    }
+    else {
+      this.props.history.push('/auth')
+    }
+    
   };
 
   purchaseCancelHandler = () => {
@@ -68,6 +74,7 @@ if(this.props.ings){
             price={this.props.price}
             purchasable={this.updatePurchaseState(this.props.ings)}
             ordered={this.purchaseHandle}
+            isAuthenticated={this.props.isAuthenticated}
           />
         </Aux>
       );
@@ -97,7 +104,8 @@ const mapStateToProps = state => {
   return {
     ings: state.cakeBuilder.ingredients,
     price: state.cakeBuilder.totalPrice,
-    error: state.cakeBuilder.error
+    error: state.cakeBuilder.error,
+    isAuthenticated: state.auth.token !== null
   }
 }
 

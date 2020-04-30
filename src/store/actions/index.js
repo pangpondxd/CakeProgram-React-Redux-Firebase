@@ -5,5 +5,6 @@ export {
 } from './cakeBuilder'
 export { purchaseCake, purchaseInit,fetchOrders } from './order'
 export {
-    auth
+    auth,
+    logout
 } from './auth' 

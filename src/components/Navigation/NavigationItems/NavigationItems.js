@@ -4,8 +4,13 @@ import './NavigationItems.css'
 const NavigationItems = (props) => (
     <ul className="NavigationItems">
        <NavigationItem link="/" exact>Cake Builder</NavigationItem>
-       <NavigationItem link="/orders">Orders</NavigationItem>
-       <NavigationItem link="/auth">Login</NavigationItem>
+       { !props.isAuthenticated 
+       ? <NavigationItem link="/orders">Orders</NavigationItem> 
+       : null }
+       { !props.isAuthenticated 
+       ? <NavigationItem link="/auth">Login</NavigationItem>
+       :  <NavigationItem link="/logout">Logout</NavigationItem>
+       }
     </ul>
 )
 
