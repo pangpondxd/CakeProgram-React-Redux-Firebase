@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import Aux from "../../hoc/Aux/Aux";
 import Cake from "../../components/Cake/Cake";
 import BuildControls from "../../components/Cake/BuildControls/BuildControls";
@@ -9,20 +9,18 @@ import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
 import { connect } from 'react-redux'
 import * as cakeBuilderActions from '../../store/actions/index'
 import axios from '../../axios-orders'
-class CakeBuilder extends Component {
+const CakeBuilder = props => {
   // constructor(props) {
   //     super(props);
-  //     this.state = {...}
+  //     state = {...}
   // }
-  state = {
-    purchasing: false
-  };
-  componentDidMount() {
-    console.log(this.props)
-    this.props.onInitIngredients()
-  
-  }
-  updatePurchaseState(ingredients) {
+  const [ purchasing, setPurchasing] = useState(false)
+
+  useEffect(() => {
+    props.onInitIngredients()
+  }, [])
+
+  const updatePurchaseState = (ingredients) => {
     const sum = Object.keys(ingredients)
       .map(igKey => {
         return ingredients[igKey];
@@ -35,62 +33,63 @@ class CakeBuilder extends Component {
 
   
 
-  purchaseHandle = () => {
-    if(this.props.isAuthenticated){
-      this.setState({ purchasing: true });
+  const purchaseHandle = () => {
+    if(props.isAuthenticated){
+      setPurchasing(true)
     }
     else {
-      this.props.history.push('/auth')
+      props.onSetRedirectPath('/checkout')
+      props.history.push('/auth')
     }
     
   };
 
-  purchaseCancelHandler = () => {
-    this.setState({ purchasing: false });
+  const purchaseCancelHandler = () => {
+    setPurchasing(false)
   };
 
-  purchaseContinueHandler = () => {
-    this.props.onInitPurchase()
-    this.props.history.push('/checkout')
+  const purchaseContinueHandler = () => {
+    props.onInitPurchase()
+    props.history.push('/checkout')
   };
-  render() {
+
     const disabledInfo = {
-      ...this.props.ings
+      ...props.ings
     };
     for (let key in disabledInfo) {
       disabledInfo[key] = disabledInfo[key] <= 0;
     }
     let orderSummary = null;
     
-let cake = this.props.error ? <p>Ingredients can't loaded</p> : <Spinner /> ;
-if(this.props.ings){
+let cake = props.error ? <p>Ingredients can't loaded</p> : <Spinner /> ;
+if(props.ings){
     cake = (
         <Aux>
-          <Cake ingredients={this.props.ings} />
+          <Cake ingredients={props.ings} />
           <BuildControls
-            ingredientAdded={this.props.onIngredientAdded}
-            ingredientRemoved={this.props.onIngredientRemoved}
+            ingredientAdded={props.onIngredientAdded}
+            ingredientRemoved={props.onIngredientRemoved}
             disabled={disabledInfo}
-            price={this.props.price}
-            purchasable={this.updatePurchaseState(this.props.ings)}
-            ordered={this.purchaseHandle}
-            isAuthenticated={this.props.isAuthenticated}
+            price={props.price}
+            purchasable={updatePurchaseState(props.ings)}
+            ordered={purchaseHandle}
+            isAuthenticated={props.isAuthenticated}
           />
         </Aux>
       );
       orderSummary = 
         <OrderSummary
-          ingredients={this.props.ings}
-          price={this.props.price}
-          purchaseCanceled={this.purchaseCancelHandler}
-          purchaseContinued={this.purchaseContinueHandler}
+          ingredients={props.ings}
+          price={props.price}
+          purchaseCanceled={purchaseCancelHandler}
+          purchaseContinued={purchaseContinueHandler}
         />
     }
     return (
       <Aux>
         <Modal
-          show={this.state.purchasing}
-          modalClosed={this.purchaseCancelHandler}
+          show={purchasing}
+          modalClosed={purchaseCancelHandler}
         >
           {orderSummary}
         </Modal>
@@ -98,7 +97,6 @@ if(this.props.ings){
       </Aux>
     );
   }
-}
 
 const mapStateToProps = state => {
   return {
@@ -114,7 +112,8 @@ const mapDispatchToProps = dispatch => {
     onIngredientAdded: (ingName) => dispatch(cakeBuilderActions.addIngredient(ingName)),
     onIngredientRemoved: (ingName) => dispatch(cakeBuilderActions.removeIngredient(ingName)),
     onInitIngredients: () => dispatch(cakeBuilderActions.initIngredients()),
-    onInitPurchase: () => dispatch(cakeBuilderActions.purchaseInit())
+    onInitPurchase: () => dispatch(cakeBuilderActions.purchaseInit()),
+    onSetRedirectPath: (path) => dispatch(cakeBuilderActions.setAuthRedirectPath(path))
   }
 }
 
