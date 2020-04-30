@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import './CakeIngredient.css';
 import PropTypes from 'prop-types';
-class CakeIngredient extends Component  {
-    render (){
+const  CakeIngredient = props => {
     let ingredient = null;
 
-    switch (this.props.type) {
+    switch (props.type) {
         case ('cake-bottom'):
         ingredient = <div className="CakeBottom"><h3 className="FontBase">CAKE's BASE</h3></div>;
         break;
@@ -40,7 +39,6 @@ class CakeIngredient extends Component  {
             ingredient = null;
     }
     return ingredient;
-}
 }
 CakeIngredient.propTypes = {
     type: PropTypes.string.isRequired
